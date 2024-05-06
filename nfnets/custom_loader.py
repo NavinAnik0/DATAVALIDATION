@@ -39,6 +39,7 @@ class CustomImageLoader(S3FileLoader):
         self.labels = pd.read_csv(StringIO(csv_string), header=0, index_col=False)
         self.transforms = transforms
         self.classes = classes
+        self.failed_images = []
 
     def __transform_label__(self, growth_label, hole_label):
         return self.classes['growth'].index(growth_label), self.classes['hole'].index(hole_label)
