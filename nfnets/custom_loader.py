@@ -32,6 +32,7 @@ class CustomImageLoader(S3FileLoader):
     def __init__(self, urls, transforms, classes, labels_csv_path, bucket_name):
         super(CustomImageLoader, self).__init__(urls)
         s3 = boto3.client("s3")
+        print(labels_csv_path)
         csv_obj = s3.get_object(Bucket=bucket_name, Key=labels_csv_path)
         body = csv_obj['Body']
         csv_string = body.read().decode('utf-8')
@@ -46,12 +47,21 @@ class CustomImageLoader(S3FileLoader):
         for url in self.source_datapipe:
             labels = self.labels[self.labels['image_path'] == url.split('/')[5]]
             growth_label, hole_label = self.__transform_label__(labels['growth'].values[0], labels['holes'].values[0])
-            image = Image.open(BytesIO(self.handler.s3_read(url)))
-            transformed_image = self.transforms(image)
-            yield {'growth': growth_label, 'hole': hole_label}, transformed_image
+            try:
+                image = Image.open(BytesIO(self.handler.s3_read(url)))
+                transformed_image = self.transforms(image)
+                yield {'growth': growth_label, 'hole': hole_label}, transformed_image
+            except Exception as e:
+                print(f"Failed to load image: {url}. Error: {str(e)}")
+                self.failed_images.append(url)
 
     def __len__(self) -> int:
         return len(self.source_datapipe)
+
+    def save_failed_images(self, filename):
+        with open(filename, 'w') as file:
+            for url in self.failed_images:
+                file.write(url + '\n')
 
 
 class CustomBatcher(Batcher):

@@ -1,0 +1,20 @@
+device: 'cuda:0'
+variant: 'F0'         # F0 - F7
+num_classes: 1000     # Number of classes
+activation: 'gelu'    # or 'relu'
+stochdepth_rate: 0.25 # 0-1, the probability that a layer is dropped during one step
+alpha: 0.2            # Scaling factor at the end of each block
+se_ratio: 0.5         # Squeeze-Excite expansion ratio
+use_fp16: False       # Use 16bit floats, which lowers memory footprint. This currently sets
+                      # the complete model to FP16 (will be changed to match FP16 ops from paper)
+checkpoints_path: 'checkpoints/experiment_24_st_depth_0.2521-11-2023/' # Path to the directory where models are saved
+test_set_path: 'test_set_5'
+test_set_type: 'csv' # Possible values ['csv', 'folder']
+mean: [0.485, 0.456, 0.406]
+std: [0.229, 0.224, 0.225]
+model_width: 1080
+model_height: 1080
+experiment: 24
+classes: {growth: ['high_growth', 'low_growth', 'medium_growth'], hole: ['no holes', 'holes']}
+result_folder: './results/'
+bucket: 'dev-model-training'
