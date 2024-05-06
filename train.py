@@ -96,8 +96,10 @@ def train(config: dict) -> None:
 
     print("data loader ready")
     print("Testing Training data set ...")
+    step = 0;
     for data in dataloader:
-        print(".....")
+        step = step+ 1
+        print("Training step", step," .....")
         target_holes, target_growth,  inputs = data[0], data[1], data[2]
         print("..")
 
@@ -105,7 +107,7 @@ def train(config: dict) -> None:
 
     print("Testing Validation data set ...")
     for data in validation_loader:
-        print(".....")
+        print("Validation", step," .....")
         target_holes, target_growth, inputs = data[0], data[1], data[2]
         print("..")
 
